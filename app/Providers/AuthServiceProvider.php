@@ -5,6 +5,9 @@ namespace App\Providers;
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
 use Illuminate\Support\Facades\Gate;
 use App\User;
+use App\Municipe;
+use Illuminate\Http\Request;
+
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -33,5 +36,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::define('prestador', function(User $user){
             return $user->tipo == 'prestador';
         });
+
+        Gate::define('ativo', function(Municipe $municipe){
+            return $municipe->inscricaomunicipal == '26';
+        });
+
     }
 }

@@ -34,44 +34,29 @@
         <div class="login-box" style="background: #ffffff; opacity: 100%; position: absolute; z-index: 99;">
             <div class="login-logo">
                 <img style="width:150px;" src="vendor/adminlte/dist/img/logo.jpg" alt=""><br>
-                <a href="{{ $dashboard_url }}">{!! config('adminlte.logo', '<b>Admin</b>LTE') !!}</a>
+                <a href="{{ $dashboard_url }}">hs<strong>Contracheque</strong></a>
             </div>
 
             <div class="card">
                 <div class="card-body login-card-body" style="opacity: 200%;">
                     <p class="login-box-msg">{{ __('adminlte::adminlte.login_message') }}</p>
-                    <form action="{{ $login_url }}" method="post">
+                    <form action="{{ route('login') }}" method="post">
                         {{ csrf_field() }}
                         <div class="input-group mb-3">
-                            <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}" value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
+                            <input type="text" name="cpf" class="form-control" value="{{ old('cpf') }}" placeholder="Seu CPF" autofocus required>
                             <div class="input-group-append">
                                 <div class="input-group-text">
-                                    <span class="fas fa-envelope"></span>
+                                    <span class="fas fa-user"></span>
                                 </div>
                             </div>
-                            @if ($errors->has('email'))
-                                <div class="invalid-feedback">
-                                    @if ($errors->first('email') == 'validation.required')
-                                        Campo email obrigatório
-                                    @endif
-                                    @if ($errors->first('email') == 'auth.failed')
-                                        Dados incorretos
-                                    @endif
-                                </div>
-                            @endif
                         </div>
                         <div class="input-group mb-3">
-                            <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}" placeholder="{{ __('adminlte::adminlte.password') }}">
+                        <input type="password" name="senha" class="form-control" placeholder="Sua senha" required>
                             <div class="input-group-append">
                                 <div class="input-group-text">
                                     <span class="fas fa-lock"></span>
                                 </div>
                             </div>
-                            @if ($errors->has('password'))
-                                <div class="invalid-feedback">
-                                    Campo obrigatório
-                                </div>
-                            @endif
                         </div>
                         <div class="row">
                             <div class="col-8">
@@ -92,13 +77,7 @@
                             {{ __('adminlte::adminlte.i_forgot_my_password') }}
                         </a>
                     </p>
-                    @if ($register_url)
-                        <p class="mb-0">
-                            <a href="{{ $register_url }}">
-                                {{ __('adminlte::adminlte.register_a_new_membership') }}
-                            </a>
-                        </p>
-                    @endif
+                    
                 </div>
             </div>
         </div>

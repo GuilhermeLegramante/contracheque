@@ -14,7 +14,7 @@ return [
     |
      */
 
-    'title' => 'hs NFS-e',
+    'title' => 'hsContracheque',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -45,7 +45,7 @@ return [
     |
      */
 
-    'logo' => '<b>hs</b> NFS-e',
+    'logo' => '<b>hs</b> Contracheque',
     'logo_img' => 'vendor/adminlte/dist/img/logo.jpg',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
@@ -208,53 +208,23 @@ return [
      */
 
     'menu' => [
-        
-
+        'CONSULTAS',
         [
-            'text' => 'Contribuintes',
-            'icon' => 'fas fa-users',
-            'can' => 'fiscal',
-            'submenu' => [
-                [
-                    'text' => ' Cadastrar Prestador',
-                    'url' => 'fiscal/prestador/cadastro',
-                    'icon' => 'fas fa-user-plus',
-                ],
-                [
-                    'text' => ' Ver Prestadores',
-                    'url' => 'fiscal/prestadores',
-                    'icon' => 'far fa-eye',
-                ],
-                [
-                    'text' => ' Cadastrar Tomador',
-                    'url' => 'fiscal/tomador/cadastro',
-                    'icon' => 'fas fa-user-plus',
-                ],
-                [
-                    'text' => ' Ver Tomadores',
-                    'url' => 'fiscal/tomadores',
-                    'icon' => 'far fa-eye',
-                ],
-            ],
+            'text' => 'Demonstrativo Mensal',
+            'url' => '/demonstrativoMensal',
+            'icon' => 'far fa-calendar-alt',
+        ],
+        [
+            'text' => 'Demonstrativo por Período',
+            'url' => '/demonstrativoPeriodo',
+            'icon' => 'fas fa-history',
+        ],
+        [
+            'text' => 'Sair',
+            'url' => '/sair',
+            'icon' => 'fas fa-sign-out-alt',
         ],
 
-        [
-            'text' => 'Nota Fiscal',
-            'icon' => 'fas fa-dollar-sign',
-            'can' => 'fiscal',
-            'submenu' => [
-                [
-                    'text' => 'Emitir NFS-e',
-                    'url' => 'prestador/nfse/emissao/primeiraetapa',
-                    'icon' => 'fas fa-file-alt',
-                ],
-                [
-                    'text' => 'NFS-e(s) emitida(s)',
-                    'url' => 'prestador/nfse/nfses',
-                    'icon' => 'far fa-newspaper',
-                ],
-            ],
-        ],
     ],
 
     /*
