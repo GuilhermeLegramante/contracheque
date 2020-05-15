@@ -211,7 +211,7 @@ return [
         'CONSULTAS',
         [
             'text' => 'Demonstrativo Mensal',
-            'url' => '/demonstrativoMensal',
+            'url' => '/consultaDemonstrativoMensal',
             'icon' => 'far fa-calendar-alt',
         ],
         [

@@ -150,3 +150,8 @@ function pesquisacep(valor) {
 function confirmaExclusao() {
     confirm("Você deseja realmente excluir o registro?");
 }
+
+$("#voltar").click(function(e) {
+    e.preventDefault();
+    window.history.back();
+});
