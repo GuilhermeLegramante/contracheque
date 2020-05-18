@@ -10,12 +10,14 @@ use Illuminate\Support\Facades\Route;
  */
 
 Route::group(['middleware' => ['web']], function () {
-    Route::get('/', 'MunicipeController@verificaLogin')->name('verificaLogin');
-    Route::post('login', 'MunicipeController@login')->name('login');
-    Route::get('/sair', 'MunicipeController@sair')->name('sair');
-    Route::get('/consultaDemonstrativoMensal', 'MunicipeController@consultaDemonstrativoMensal')->name('consultaDemonstrativoMensal');
-    Route::post('buscaContrachequeMensal', 'MunicipeController@buscaContrachequeMensal')->name('buscaContrachequeMensal');
-    Route::post('geraPdfMensal', 'MunicipeController@geraPdfMensal')->name('geraPdfMensal');
+    Route::get('/', 'ContrachequeController@verificaLogin')->name('verificaLogin');
+    Route::post('login', 'ContrachequeController@login')->name('login');
+    Route::get('/sair', 'ContrachequeController@sair')->name('sair');
+    Route::get('/consultaDemonstrativoMensal', 'ContrachequeController@consultaDemonstrativoMensal')->name('consultaDemonstrativoMensal');
+    Route::get('/consultaDemonstrativoPeriodo', 'ContrachequeController@consultaDemonstrativoPeriodo')->name('consultaDemonstrativoPeriodo');
+    Route::post('buscaContrachequeMensal', 'ContrachequeController@buscaContrachequeMensal')->name('buscaContrachequeMensal');
+    Route::post('geraPdfMensal', 'ContrachequeController@geraPdfMensal')->name('geraPdfMensal');
+    Route::post('geraPdfPeriodo', 'ContrachequeController@geraPdfPeriodo')->name('geraPdfPeriodo');
 
 
 });

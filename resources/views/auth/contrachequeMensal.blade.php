@@ -17,11 +17,6 @@
     <input type="hidden" name="mes" value="{{$mes}}">
     <input type="hidden" name="descricaomes" value="{{$descricaomes}}">
     <input type="hidden" name="ano" value="{{$ano}}">
-    <input type="hidden" name="servidor" value="{{json_encode($servidor)}}">
-    <input type="hidden" name="valores" value="{{json_encode($valores)}}">
-    <input type="hidden" name="vencimentos" value="{{json_encode($vencimentos)}}">
-    <input type="hidden" name="descontos" value="{{json_encode($descontos)}}">
-    <input type="hidden" name="bases" value="{{json_encode($bases)}}">
     <input type="hidden" name="totalVencimentos" value="{{$totalVencimentos}}">
     <input type="hidden" name="totalDescontos" value="{{$totalDescontos}}">
     <input type="hidden" name="totalLiquido" value="{{$totalLiquido}}">

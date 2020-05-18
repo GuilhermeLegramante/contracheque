@@ -216,7 +216,7 @@ return [
         ],
         [
             'text' => 'Demonstrativo por Período',
-            'url' => '/demonstrativoPeriodo',
+            'url' => '/consultaDemonstrativoPeriodo',
             'icon' => 'fas fa-history',
         ],
         [
