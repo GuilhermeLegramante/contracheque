@@ -9,7 +9,7 @@
 </head>
 
 <body>
-    @for ($i = 0; $i < 2; $i++) <table style="width: 100%; border: 2px solid black; border-bottom: 1px solid black">
+    <table style="width: 100%; border: 2px solid black; border-bottom: 1px solid black">
         <tr>
             <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
                     height="100"></td>
@@ -123,7 +123,6 @@
                     {{'R$ '.number_format($totalLiquido, 2, ',', '.')}}</td>
             </tr>
         </table>
-        @endfor
 </body>
 
 <style>
