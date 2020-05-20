@@ -39,8 +39,8 @@ return [
             'host' => env('MAIL_HOST', 'smtp.weblink.com.br'),
             'port' => env('MAIL_PORT', 587),
             'encryption' => env('MAIL_ENCRYPTION', 'tls'),
-            'username' => env('MAIL_USERNAME'),
-            'password' => env('MAIL_PASSWORD'),
+            'username' => 'admin@hardsoftsfa.com.br',
+            'password' => 'WBHK3P6RC4',
             'timeout' => null,
         ],
 

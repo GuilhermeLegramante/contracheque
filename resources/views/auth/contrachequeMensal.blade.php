@@ -1,5 +1,9 @@
 @extends('adminlte::page')
 
+@section('adminlte_css_pre')
+<link rel="icon" href="{{ URL::asset('img/logo.png') }}" type="image/x-icon" />
+@stop
+
 @section('title', 'Demonstrativo Mensal')
 
 @section('content_header')

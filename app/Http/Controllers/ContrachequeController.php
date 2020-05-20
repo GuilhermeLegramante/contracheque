@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\EnviaPin;
 use DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use PDF;
 use Session;
 
@@ -40,14 +42,146 @@ class ContrachequeController extends Controller
         on hscad_cadmunicipal.inscricaomunicipal = hscad_municipedoc.idmunicipe
         where hscad_municipedoc.numero = ? and hscad_cadmunicipal.senhaweb = ?', [$cpf, $senha]);
 
+        
         // Cria as sessões e redireciona
         if ($autenticacao != null) {
             Session::put('login', true);
             Session::put('tokenweb', $autenticacao[0]->tokenweb);
-            return view('auth.painel');
+
+            $idcadmunicipal = $autenticacao[0]->idmunicipe;
+            $dadosPagamento = $this->buscaDadosPagamento($idcadmunicipal);
+
+           // dd($dadosPagamento);
+            Session::put('inscricao', $dadosPagamento[0]->inscricao);
+            Session::put('nome', $dadosPagamento[0]->nome);
+            Session::put('documento', $dadosPagamento[0]->documento);
+            Session::put('valor_provento', $dadosPagamento[0]->valor_provento);
+            Session::put('valor_desconto', $dadosPagamento[0]->valor_desconto);
+            Session::put('valor_liquido', $dadosPagamento[0]->valor_liquido);
+
+            return view('auth.painel', compact('dadosPagamento', 'autenticacao'));
         } else {
             return redirect()->back()->with('error', 'Dados incorretos.');
         }
+    }
+
+    public function buscaDadosPagamento($idcadmunicipal)
+    {
+        $dadosPagamento = DB::select('SELECT `servidor`.`idcadmunicipal` AS `inscricao`,
+        (SELECT `municipe`.`nome`
+           FROM `hscad_cadmunicipal` `municipe`
+          WHERE `servidor`.`idcadmunicipal` = `municipe`.`inscricaomunicipal`)
+           AS `nome`,
+        (SELECT `documento`.`numero`
+           FROM `hscad_municipedoc` `documento`
+          WHERE `documento`.`iddocumento` = 3
+            AND `servidor`.`idcadmunicipal` = `documento`.`idmunicipe`)
+           AS `documento`,
+        SUM(if(`evento`.`classificacao` = 1, `calculo`.`valor`, 0.00))
+           AS `valor_provento`,
+        SUM(if(`evento`.`classificacao` = 2, `calculo`.`valor`, 0.00))
+           AS `valor_desconto`,
+        SUM(
+           if(`evento`.`classificacao` = 1,
+              `calculo`.`valor`,
+              -`calculo`.`valor`))
+           AS `valor_liquido`
+        FROM `hsfol_calculo` `calculo`
+        INNER JOIN `hsfol_contrato` `contrato`
+           ON `contrato`.id = `calculo`.idcontrato
+        INNER JOIN `hsfol_servidor` `servidor`
+           ON `contrato`.`idservidor` = `servidor`.`id`
+        INNER JOIN `hsfol_evento` `evento`
+           ON `evento`.`id` = `calculo`.`idevento`
+        INNER JOIN `hsfol_referencia` `referencia`
+           ON `referencia`.`id` = `calculo`.`idreferencia`
+        WHERE `servidor`.`idcadmunicipal` = ?
+        AND `evento`.`classificacao` IN (1, 2)
+        AND YEAR(`referencia`.`datafolha`) = 2019
+        GROUP BY `servidor`.`idcadmunicipal`', [$idcadmunicipal]);
+
+        return $dadosPagamento;
+    }
+
+    public function painel(){
+        if (Session::get('login')) {
+            return view('auth.painel');
+        } else {
+            return view('auth.login');
+        }
+    }
+
+    public function recuperarSenha()
+    {
+        return view('auth.resgateSenha');
+    }
+
+    public function salvarNovaSenha(Request $request)
+    {
+        // Verifica se tem fol2 pro database
+        $database = DB::connection()->getDatabaseName();
+        $fol2 = '%hsfol2_%';
+        $verificaFol2 = DB::select('SELECT 1 FROM INFORMATION_SCHEMA.TABLES tbl WHERE tbl.`TABLE_NAME`
+            LIKE ? AND `TABLE_SCHEMA` = ? LIMIT 1', [$fol2, $database]);
+
+        if ($verificaFol2 == null) {
+            Session::put('fol2', false);
+        }
+
+        // Recebe os dados do form/
+        $cpf = $request->cpf;
+        $senha = $request->senha;
+        $confirmaSenha = $request->confirmasenha;
+        $pin = $request->pin;
+        $senhaCrip = sha1($request->senha);
+
+        if ($senha != $confirmaSenha) {
+            return redirect()->back()->with('error', 'Senhas diferentes.');
+        }
+
+        // Recupera a inscrição municipal
+        $inscricaoMunicipal = DB::select('select a.inscricaomunicipal from hscad_cadmunicipal a, hscad_municipedoc b
+            where b.numero = ? && a.pin = ? && a.inscricaomunicipal = b.idmunicipe', [$cpf, $pin]);
+
+        $atualizaSenha = DB::table('hscad_cadmunicipal')
+            ->where('inscricaomunicipal', $inscricaoMunicipal[0]->inscricaomunicipal)
+            ->update([
+                'senhaweb' => $senhaCrip,
+            ]);
+    }
+
+    public function buscarPin()
+    {
+        return view('auth.pin');
+    }
+
+    public function enviarPin(Request $request)
+    {
+        // Verifica se tem fol2 pro database
+        $database = DB::connection()->getDatabaseName();
+        $fol2 = '%hsfol2_%';
+        $verificaFol2 = DB::select('SELECT 1 FROM INFORMATION_SCHEMA.TABLES tbl WHERE tbl.`TABLE_NAME`
+            LIKE ? AND `TABLE_SCHEMA` = ? LIMIT 1', [$fol2, $database]);
+
+        if ($verificaFol2 == null) {
+            Session::put('fol2', false);
+        }
+
+        // Recebe os dados do form/
+        $cpf = $request->cpf;
+        $email = $request->email;
+
+        // Busca o PIN e envia o email
+        $buscaPin = DB::select('select a.pin from hscad_cadmunicipal a, hscad_municipedoc b
+        where b.numero = ? && a.email = ? && a.inscricaomunicipal = b.idmunicipe', [$cpf, $email]);
+        if ($buscaPin != null) {
+            $pin = $buscaPin[0]->pin;
+            Mail::to($email)->send(new EnviaPin($cpf, $pin));
+            return redirect()->back()->with('success', 'E-mail enviado com sucesso.');
+        } else {
+            return redirect()->back()->with('error', 'E-mail não cadastrado, entre em contato com a administração.');
+        }
+
     }
 
     public function sair()

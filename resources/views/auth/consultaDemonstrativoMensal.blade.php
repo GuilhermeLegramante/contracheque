@@ -83,7 +83,7 @@
             <br>
             <div class="row">
                 <div class="col-sm-12" style="text-align: center;">
-                    <a href="{{ route('consultaDemonstrativoMensal') }}" style="width: 50%;" title="Voltar" class="btn btn-info"><i class="fas fa-chevron-left"></i> Voltar</a>
+                    <a href="{{ route('painel') }}" style="width: 50%;" title="Voltar" class="btn btn-info"><i class="fas fa-chevron-left"></i> Voltar</a>
                 </div>
             </div>
         </div>

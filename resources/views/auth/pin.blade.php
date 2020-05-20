@@ -2,6 +2,7 @@
 
 @section('adminlte_css_pre')
 <link rel="stylesheet" href="{{ asset('vendor/icheck-bootstrap/icheck-bootstrap.min.css') }}">
+<link rel="icon" href="{{ URL::asset('img/logo.png') }}" type="image/x-icon" />
 @stop
 
 @section('adminlte_css')
@@ -40,17 +41,21 @@
 
         <div class="card">
             <div class="card-body login-card-body" style="opacity: 200%;">
-                <p class="login-box-msg">{{ __('adminlte::adminlte.login_message') }}</p>
                 @if(session('error'))
                 <div class="alert alert-danger">
                     {{ session('error') }}
                 </div>
                 @endif
-                <form action="{{ route('login') }}" method="post">
+                @if(session('success'))
+                <div class="alert alert-success">
+                    {{ session('success') }}
+                </div>
+                @endif
+                <form action="{{ route('enviarPin') }}" method="post">
                     {{ csrf_field() }}
                     <div class="input-group mb-3">
                         <input type="text" name="cpf" class="form-control" value="{{ old('cpf') }}"
-                            placeholder="Seu CPF" onblur="javascript: formatarCampo(this);" maxlength="14" autofocus required>
+                            placeholder="Seu CPF" autofocus required>
                         <div class="input-group-append">
                             <div class="input-group-text">
                                 <span class="fas fa-user"></span>
@@ -58,29 +63,22 @@
                         </div>
                     </div>
                     <div class="input-group mb-3">
-                        <input type="password" name="senha" class="form-control" placeholder="Sua senha" required>
+                        <input type="email" name="email" class="form-control" placeholder="Seu e-mail cadastrado" required>
                         <div class="input-group-append">
                             <div class="input-group-text">
-                                <span class="fas fa-lock"></span>
+                                <span class="fas fa-envelope"></span>
                             </div>
                         </div>
                     </div>
                     <div class="row">
-                        <div class="col-6">
-                            <a href="{{ route('resgateSenha') }}">
-                                {{ __('adminlte::adminlte.i_forgot_my_password') }}
-                            </a>
-                        </div>
-                    </div>
-                    <br>
-                    <div class="row">
                         <div class="col-12">
                             <button type="submit" class="btn btn-primary btn-block btn-flat">
-                                {{ __('adminlte::adminlte.sign_in') }}
+                                Enviar
                             </button>
                         </div>
-                    </div>
+                    </div>  
                 </form>
+                
 
             </div>
         </div>
@@ -93,9 +91,6 @@
 <link rel="icon" href="{{ URL::asset('img/logo.jpg') }}" type="image/x-icon" />
 @endsection
 
-@section('js')
-<script src="{{asset('js/custom.js')}}"></script>
-@endsection
 
 @section('adminlte_js')
 <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>
