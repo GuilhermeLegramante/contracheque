@@ -15,13 +15,13 @@
                     height="100"></td>
         </tr>
         <tr>
-            <td style="margin-left: -20px; font-size:16px; font-weight: bold">{{$dadosOrgao[0]->nome_empresa}}</td>
+            <td style="padding-left: -120px; margin-left: -20px; font-size:16px; font-weight: bold">{{$dadosOrgao[0]->nome_empresa}}</td>
         </tr>
         <tr>
-            <td style="font-size: 14px; font-weight: bold">{{$dadosOrgao[0]->nome}}, {{$dadosOrgao[0]->numero}}</td>
+            <td style="padding-left: -120px; font-size: 14px; font-weight: bold">{{$dadosOrgao[0]->nome}}, {{$dadosOrgao[0]->numero}}</td>
         </tr>
         <tr>
-            <td style="font-size: 14px; font-weight: bold">{{$dadosOrgao[0]->cnpj}}</td>
+            <td style="padding-left: -120px; font-size: 14px; font-weight: bold">{{$dadosOrgao[0]->cnpj}}</td>
         </tr>
         <tr>
             <td style="font-size: 14px; font-weight: bold; text-align: right">Folha: {{$valores[0]->desc_tipofolha}} -
@@ -35,7 +35,7 @@
             style="width: 100%; border: 2px solid black; font-size: 10px; border-top: 1px solid black; border-bottom: 1px solid black">
             <tr>
                 <td style="padding-left: 5px"><b>Servidor: </b>{{$servidor[0]->nome}}</td>
-                <td><b>Contrato: </b></td>
+                <td><b>Contrato:</b> {{$contrato}}</td>
                 <td rowspan="2"><b>Padrão-Nível-Classe:
                     </b>{{$servidor[0]->padrao}}-{{$servidor[0]->nivel}}-{{$servidor[0]->classe}}</td>
             </tr>
@@ -92,10 +92,10 @@
             @endforeach
             @foreach ($bases as $base)
             <tr>
-                <td style="border-right: 2px solid black; text-align: center">{{$vencimento->codigo}}</td>
-                <td style="padding: 5px; border-right: 2px solid black">{{$vencimento->desc_evento}}</td>
+                <td style="border-right: 2px solid black; text-align: center">{{$base->codigo}}</td>
+                <td style="padding: 5px; border-right: 2px solid black">{{$base->desc_evento}}</td>
                 <td style="padding: 5px; border-right: 2px solid black; text-align: right">
-                    {{number_format($vencimento->referencia, 2, ',', '.')}}</td>
+                    {{number_format($base->referencia, 2, ',', '.')}}</td>
                 <td style="padding: 5px; border-right: 2px solid black; text-align: right">
                     {{number_format($base->valor, 2, ',', '.')}}</td>
                 <td style="padding: 5px; border-right: 2px solid black"></td>

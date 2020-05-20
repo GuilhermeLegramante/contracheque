@@ -41,6 +41,11 @@
         <div class="card">
             <div class="card-body login-card-body" style="opacity: 200%;">
                 <p class="login-box-msg">{{ __('adminlte::adminlte.login_message') }}</p>
+                @if(session('error'))
+                <div class="alert alert-danger">
+                    {{ session('error') }}
+                </div>
+                @endif
                 <form action="{{ route('login') }}" method="post">
                     {{ csrf_field() }}
                     <div class="input-group mb-3">

@@ -6,6 +6,12 @@
 
 @include('includes.alerts')
 
+@if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+@endif
+
 @endsection
 
 @section('content')
@@ -36,8 +42,8 @@
                     <div class="form-group">
                         <label>Tipo de Folha</label>
                         <select name="tipofolha" id="tipofolha" class="form-control">
-                            @foreach ($tiposfolha as $tipofolha)
                             <option value="TODOS">TODOS</option>
+                            @foreach ($tiposfolha as $tipofolha)
                             <option value="{{$tipofolha->id}}">{{$tipofolha->descricao}}</option>
                             @endforeach
                         </select>
@@ -66,8 +72,8 @@
             <div class="row">
                 <div class="col-sm-12" style="text-align: center;">
                     <button type="submit" class="btn btn-success" style="width: 50%;">
-                        Consultar
-                        <i class="far fa-eye"></i>
+                        Gerar PDF
+                        <i class="fas fa-file-pdf"></i>
                     </button>
                 </div>
             </div>
