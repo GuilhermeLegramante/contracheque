@@ -25,20 +25,20 @@
         <div style="margin-bottom: -20px;" class="row">
             <div style="" class="col-sm-1 left">
                 <div class="form-group left">
-                    <label style="margin-bottom: -5px;">Inscrição</label>
-                    <h5>{{ session('inscricao') }}</h5>
+                    <label style="font-weight: 600; margin-bottom: -5px;">Inscrição</label>
+                    <h5 style="font-weight: 300;">{{ session('inscricao') }}</h5>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="form-group">
-                    <label style="margin-bottom: -5px;">Nome</label>
-                    <h5>{{session('nome')}}</h5>
+                    <label style="font-weight: 600; margin-bottom: -5px;">Nome</label>
+                    <h5 style="font-weight: 300;">{{session('nome')}}</h5>
                 </div>
             </div>
             <div class="col-sm-3">
                 <div class="form-group">
-                    <label style="margin-bottom: -5px;">CPF</label>
-                    <h5>{{session('documento')}}</h5>
+                    <label style="font-weight: 600; margin-bottom: -5px;">CPF</label>
+                    <h5 style="font-weight: 300;">{{session('documento')}}</h5>
                 </div>
             </div>
         </div>
