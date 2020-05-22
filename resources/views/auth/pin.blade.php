@@ -54,7 +54,7 @@
                 <form action="{{ route('enviarPin') }}" method="post">
                     {{ csrf_field() }}
                     <div class="input-group mb-3">
-                        <input type="text" name="cpf" class="form-control" value="{{ old('cpf') }}"
+                        <input type="text" name="cpf" onblur="javascript: formatarCampo(this);" maxlength="14" class="form-control" value="{{ old('cpf') }}"
                             placeholder="Seu CPF" autofocus required>
                         <div class="input-group-append">
                             <div class="input-group-text">
@@ -91,6 +91,9 @@
 <link rel="icon" href="{{ URL::asset('img/logo.jpg') }}" type="image/x-icon" />
 @endsection
 
+@section('js')
+<script src="{{asset('js/custom.js')}}"></script>
+@endsection
 
 @section('adminlte_js')
 <script src="{{ asset('vendor/adminlte/dist/js/adminlte.min.js') }}"></script>

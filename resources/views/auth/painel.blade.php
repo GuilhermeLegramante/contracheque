@@ -29,7 +29,7 @@
                     <h5>{{ session('inscricao') }}</h5>
                 </div>
             </div>
-            <div class="col-sm-2">
+            <div class="col-sm-4">
                 <div class="form-group">
                     <label style="margin-bottom: -5px;">Nome</label>
                     <h5>{{session('nome')}}</h5>

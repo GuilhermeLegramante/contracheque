@@ -56,7 +56,7 @@
                         <h3>{{$contrato}}</h3>
                     </div>
                 </div>
-                <div class="col-sm-2">
+                <div class="col-sm-3">
                     <div class="form-group">
                         <label>Nome</label>
                         <h3>{{$servidor[0]->nome}}</h3>
