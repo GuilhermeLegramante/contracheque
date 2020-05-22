@@ -67,6 +67,7 @@
             <td style="padding: 5px; text-align:right; border-bottom: 2px solid black; width: 17%"><b>Descontos</b>
             </td>
         </tr>
+        @if(isset($vencimentos))
         @foreach ($vencimentos as $vencimento)
         <tr>
             <td style="border-right: 2px solid black; text-align: center">{{$vencimento->codigo}}</td>
@@ -80,6 +81,9 @@
         </tr>
         </tr>
         @endforeach
+        @endif
+
+        @if(isset($descontos))
         @foreach ($descontos as $desconto)
         <tr>
             <td style="border-right: 2px solid black; text-align: center">{{$desconto->codigo}}</td>
@@ -92,6 +96,9 @@
         </tr>
         </tr>
         @endforeach
+        @endif
+
+        @if(isset($bases))
         @foreach ($bases as $base)
         <tr>
             <td style="border-right: 2px solid black; text-align: center">{{$base->codigo}}</td>
@@ -105,6 +112,7 @@
         </tr>
         </tr>
         @endforeach
+        @endif
         <tr>
             <td style="padding: 5px; border-top: 2px solid black; border-right: 2px solid black" colspan="4"
                 rowspan="3"><b>Referência:</b> {{$descricaomes}}/{{$ano}}</td>

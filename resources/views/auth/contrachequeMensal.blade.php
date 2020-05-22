@@ -25,7 +25,7 @@
     <input type="hidden" name="totalDescontos" value="{{$totalDescontos}}">
     <input type="hidden" name="totalLiquido" value="{{$totalLiquido}}">
     <!-- Fim Dados enviados no Form -->
-    
+
     @if ($valores == null)
     <div class="card">
         <div class="card-body">
@@ -113,8 +113,9 @@
             </div>
             <!-- fim cabeçalho -->
 
-            @foreach ($vencimentos as $vencimento)
             <!-- Vencimentos -->
+            @if(isset($vencimentos))
+            @foreach ($vencimentos as $vencimento)
             <div class="row esconder">
                 <div class="col-sm-1">
                     <div class="form-group">
@@ -140,11 +141,13 @@
                     </div>
                 </div>
             </div>
-            <!-- fim Vencimentos -->
             @endforeach
+            @endif
+            <!-- fim Vencimentos -->
 
-            @foreach ($descontos as $desconto)
             <!-- Descontos -->
+            @if(isset($descontos))
+            @foreach ($descontos as $desconto)
             <div class="row esconder">
                 <div class="col-sm-1">
                     <div class="form-group">
@@ -170,11 +173,13 @@
                     </div>
                 </div>
             </div>
-            <!-- fim Descontos -->
             @endforeach
+            @endif
+            <!-- fim Descontos -->
 
-            @foreach ($bases as $base)
             <!-- Bases -->
+            @if(isset($bases))
+            @foreach ($bases as $base)
             <div class="row esconder">
                 <div class="col-sm-1">
                     <div class="form-group">
@@ -200,8 +205,10 @@
                     </div>
                 </div>
             </div>
-            <!-- fim Bases -->
             @endforeach
+            @endif
+            <!-- fim Bases -->
+
             <div class="row">
                 <div class="col-sm-4">
                     <div style="text-align: right;" class="form-group">

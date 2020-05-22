@@ -52,13 +52,13 @@
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Data Inicial</label>
-                        <input class="form-control" type="date" name="datainicial" id="datainicial" required>
+                        <input class="form-control" type="date" name="datainicial" id="datainicial" value="{{$dtI}}" required>
                     </div>
                 </div>
                 <div class="col-sm-4">
                     <div class="form-group">
                         <label>Data Final</label>
-                        <input class="form-control" type="date" name="datafinal" id="datafinal" required>
+                        <input class="form-control" type="date" name="datafinal" id="datafinal" value="{{$dtF}}" required>
                     </div>
                 </div>
             </div>

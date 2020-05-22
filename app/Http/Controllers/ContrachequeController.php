@@ -287,6 +287,7 @@ class ContrachequeController extends Controller
                 $tiposfolha = DB::select('select id, descricao from hsfol_tipofolha');
             }
             $mesNumero = date('n');
+            $anoNumero = date('y');
 
             $meses = array(
                 '1' => 'Janeiro',
@@ -308,7 +309,7 @@ class ContrachequeController extends Controller
                 }
             }
 
-            return view('auth.consultaDemonstrativoMensal', compact('contratos', 'tiposfolha', 'mesNumero', 'mesAtual', 'meses'));
+            return view('auth.consultaDemonstrativoMensal', compact('contratos', 'tiposfolha', 'mesNumero', 'mesAtual', 'meses', 'anoNumero'));
         }
         return redirect()->route('verificaLogin');
     }
@@ -363,7 +364,7 @@ class ContrachequeController extends Controller
 
             }
 
-            $mensagem = "Contracheque não disponível.";
+            $mensagem = "Não existem lançamentos no período informado.";
             $vencimentos = $this->buscaVencimentos($valores);
 
             $descontos = $this->buscaDescontos($valores);
@@ -427,6 +428,7 @@ class ContrachequeController extends Controller
                 && b.idtipofolha = ? && EXTRACT(MONTH FROM b.datafolha) = ? && EXTRACT(YEAR FROM b.datafolha) = ? &&
                 a.idreferencia = b.id && a.idevento = c.id && b.idtipofolha = d.id && b.status = 0 && c.classificacao IN (1,2,4)
                 order by c.codigo', [$contrato, $tipofolha, $mes, $ano]);
+
             }
 
             $vencimentos = $this->buscaVencimentos($valores);
@@ -673,7 +675,7 @@ class ContrachequeController extends Controller
                                                 ORDER BY
                                                     MONTH(c.datafolha), YEAR(c.datafolha),
                                                     CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
-                   
+
                     if ($valoresTipoFolha1 != null) {
                         $totalMensal1 = $this->buscaTotaisMensalAno($valoresTipoFolha1);
                     } else {
@@ -1164,7 +1166,12 @@ class ContrachequeController extends Controller
 
             }
 
-            return view('auth.consultaDemonstrativoPeriodo', compact('contratos', 'tiposfolha'));
+            $anoNumero = date('Y');
+            $dtI = $anoNumero . "-01-01"; 
+            $dtF = $anoNumero . "-12-31";
+            //dd($dtI);
+
+            return view('auth.consultaDemonstrativoPeriodo', compact('contratos', 'tiposfolha', 'dtI', 'dtF'));
         }
         return redirect()->route('verificaLogin');
     }
