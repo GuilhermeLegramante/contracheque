@@ -126,6 +126,7 @@ class ContrachequeController extends Controller
         WHERE
             `servidor`.`idmunicipe` = ?
             AND `evento`.`classificacao` IN ('P', 'D')
+            AND `referencia`.`encerrada` = 1
             AND YEAR(`referencia`.`datafolha`) = 2020
         GROUP BY
             `servidor`.`idmunicipe`", [$idcadmunicipal]);
