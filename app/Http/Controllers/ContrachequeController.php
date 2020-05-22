@@ -76,40 +76,93 @@ class ContrachequeController extends Controller
         // MUDAR PARA TRUE QUANDO TIVER A CONSULTA FOL2
         if (Session::get('fol2') == true) {
             // CONSULTA FOL 2
+            $dadosPagamento = DB::select("SELECT
+            `servidor`.`idmunicipe` AS `inscricao`,
+            (
+                SELECT
+                    `municipe`.`nome`
+                FROM
+                    `hscad_cadmunicipal` `municipe`
+                WHERE
+                    `servidor`.`idmunicipe` = `municipe`.`inscricaomunicipal`
+            ) AS `nome`,
+            (
+                SELECT
+                    `documento`.`numero`
+                FROM
+                    `hscad_municipedoc` `documento`
+                WHERE
+                    `documento`.`iddocumento` = 3
+                    AND `servidor`.`idmunicipe` = `documento`.`idmunicipe`
+            ) AS `documento`,
+            SUM(
+                if(
+                    `evento`.`classificacao` = 'P',
+                    `calculoevento`.`valor`,
+                    0.00
+                )
+            ) AS `valor_provento`,
+            SUM(
+                if(
+                    `evento`.`classificacao` = 'D',
+                    `calculoevento`.`valor`,
+                    0.00
+                )
+            ) AS `valor_desconto`,
+            SUM(
+                if(
+                    `evento`.`classificacao` = 'P',
+                    `calculoevento`.`valor`,
+                    - `calculoevento`.`valor`
+                )
+            ) AS `valor_liquido`
+        FROM
+            `hsfol2_calculoevento` `calculoevento`
+            INNER JOIN `hsfol2_calculo` `calculo` ON `calculo`.`id` = `calculoevento`.`idcalculo`
+            INNER JOIN `hsfol2_contrato` `contrato` ON `contrato`.`id` = `calculo`.`idcontrato`
+            INNER JOIN `hsfol2_servidor` `servidor` ON `servidor`.`id` = `contrato`.`idservidor`
+            INNER JOIN `hsfol2_evento` `evento` ON `evento`.`id` = `calculoevento`.`idevento`
+            INNER JOIN `hsfol2_referencia` `referencia` ON `referencia`.`id` = `calculo`.`idreferencia`
+        WHERE
+            `servidor`.`idmunicipe` = ?
+            AND `evento`.`classificacao` IN ('P', 'D')
+            AND YEAR(`referencia`.`datafolha`) = 2020
+        GROUP BY
+            `servidor`.`idmunicipe`", [$idcadmunicipal]);
 
         } else {
             $dadosPagamento = DB::select('SELECT `servidor`.`idcadmunicipal` AS `inscricao`,
-        (SELECT `municipe`.`nome`
-           FROM `hscad_cadmunicipal` `municipe`
-          WHERE `servidor`.`idcadmunicipal` = `municipe`.`inscricaomunicipal`)
-           AS `nome`,
-        (SELECT `documento`.`numero`
-           FROM `hscad_municipedoc` `documento`
-          WHERE `documento`.`iddocumento` = 3
-            AND `servidor`.`idcadmunicipal` = `documento`.`idmunicipe`)
-           AS `documento`,
-        SUM(if(`evento`.`classificacao` = 1, `calculo`.`valor`, 0.00))
-           AS `valor_provento`,
-        SUM(if(`evento`.`classificacao` = 2, `calculo`.`valor`, 0.00))
-           AS `valor_desconto`,
-        SUM(
-           if(`evento`.`classificacao` = 1,
-              `calculo`.`valor`,
-              -`calculo`.`valor`))
-           AS `valor_liquido`
-        FROM `hsfol_calculo` `calculo`
-        INNER JOIN `hsfol_contrato` `contrato`
-           ON `contrato`.id = `calculo`.idcontrato
-        INNER JOIN `hsfol_servidor` `servidor`
-           ON `contrato`.`idservidor` = `servidor`.`id`
-        INNER JOIN `hsfol_evento` `evento`
-           ON `evento`.`id` = `calculo`.`idevento`
-        INNER JOIN `hsfol_referencia` `referencia`
-           ON `referencia`.`id` = `calculo`.`idreferencia`
-        WHERE `servidor`.`idcadmunicipal` = ?
-        AND `evento`.`classificacao` IN (1, 2)
-        AND YEAR(`referencia`.`datafolha`) = 2019
-        GROUP BY `servidor`.`idcadmunicipal`', [$idcadmunicipal]);
+                                        (SELECT `municipe`.`nome`
+                                        FROM `hscad_cadmunicipal` `municipe`
+                                        WHERE `servidor`.`idcadmunicipal` = `municipe`.`inscricaomunicipal`)
+                                        AS `nome`,
+                                        (SELECT `documento`.`numero`
+                                        FROM `hscad_municipedoc` `documento`
+                                        WHERE `documento`.`iddocumento` = 3
+                                            AND `servidor`.`idcadmunicipal` = `documento`.`idmunicipe`)
+                                        AS `documento`,
+                                        SUM(if(`evento`.`classificacao` = 1, `calculo`.`valor`, 0.00))
+                                        AS `valor_provento`,
+                                        SUM(if(`evento`.`classificacao` = 2, `calculo`.`valor`, 0.00))
+                                        AS `valor_desconto`,
+                                        SUM(
+                                        if(`evento`.`classificacao` = 1,
+                                            `calculo`.`valor`,
+                                            -`calculo`.`valor`))
+                                        AS `valor_liquido`
+                                        FROM `hsfol_calculo` `calculo`
+                                        INNER JOIN `hsfol_contrato` `contrato`
+                                        ON `contrato`.id = `calculo`.idcontrato
+                                        INNER JOIN `hsfol_servidor` `servidor`
+                                        ON `contrato`.`idservidor` = `servidor`.`id`
+                                        INNER JOIN `hsfol_evento` `evento`
+                                        ON `evento`.`id` = `calculo`.`idevento`
+                                        INNER JOIN `hsfol_referencia` `referencia`
+                                        ON `referencia`.`id` = `calculo`.`idreferencia`
+                                        WHERE `servidor`.`idcadmunicipal` = ?
+                                        AND `evento`.`classificacao` IN (1, 2)
+                                        AND YEAR(`referencia`.`datafolha`) = 2019
+                                        GROUP BY `servidor`.`idcadmunicipal`', [$idcadmunicipal]);
 
         }
         return $dadosPagamento;
@@ -418,203 +471,210 @@ class ContrachequeController extends Controller
                 // Recupera os dados dos valores no período (1 select pra cada tipo de folha)
                 if ($tipofolha == 'TODOS') {
                     $valoresTipoFolha1 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 1
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 1
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha2 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 2
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 2
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha3 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 3
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 3
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha4 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 4
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 4
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha5 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 5
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 5
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha6 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 6
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 6
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
 
                     $valoresTipoFolha7 = DB::select("SELECT
-                                            b.valor AS valor_calculado,
-                                            b.referencia AS valor_referencia,
-                                            EXTRACT(MONTH FROM c.datafolha) AS mes,
-                                            EXTRACT(YEAR FROM c.datafolha) AS ano,
-                                            d.codigo AS cod_evento,
-                                            d.descricao as desc_evento,
-                                            d.classificacao,
-                                            e.descricao as desc_tipofolha
-                                        FROM
-                                            hsfol2_calculo a,
-                                            hsfol2_calculoevento b,
-                                            hsfol2_referencia c,
-                                            hsfol2_evento d,
-                                            hsfol2_tipofolha e
-                                        WHERE
-                                            a.idcontrato = ?
-                                            AND c.idtipofolha = 7
-                                            AND c.datafolha BETWEEN ? AND ?
-                                            AND a.idreferencia = c.id
-                                            AND b.idevento = d.id
-                                            AND b.idcalculo = a.id
-                                            AND c.idtipofolha = e.id
-                                            AND c.encerrada = 1
-                                            AND d.classificacao IN ('P', 'D', 'B')
-                                        ORDER BY
-                                            d.codigo;", [$contrato, $datainicial, $datafinal]);
-
+                                                    b.valor AS valor_calculado,
+                                                    b.referencia AS valor_referencia,
+                                                    EXTRACT(MONTH FROM c.datafolha) AS mes,
+                                                    EXTRACT(YEAR FROM c.datafolha) AS ano,
+                                                    d.codigo AS cod_evento,
+                                                    d.descricao as desc_evento,
+                                                    d.classificacao,
+                                                    e.descricao as desc_tipofolha
+                                                FROM
+                                                    hsfol2_calculo a,
+                                                    hsfol2_calculoevento b,
+                                                    hsfol2_referencia c,
+                                                    hsfol2_evento d,
+                                                    hsfol2_tipofolha e
+                                                WHERE
+                                                    a.idcontrato = ?
+                                                    AND c.idtipofolha = 7
+                                                    AND c.datafolha BETWEEN ? AND ?
+                                                    AND a.idreferencia = c.id
+                                                    AND b.idevento = d.id
+                                                    AND b.idcalculo = a.id
+                                                    AND c.idtipofolha = e.id
+                                                    AND c.encerrada = 1
+                                                    AND d.classificacao IN ('P', 'D', 'B')
+                                                ORDER BY
+                                                    MONTH(c.datafolha), YEAR(c.datafolha),
+                                                    CAST(d.codigo AS UNSIGNED);", [$contrato, $datainicial, $datafinal]);
+                   
                     if ($valoresTipoFolha1 != null) {
-                        $totalMensal1 = $this->buscaTotaisMensal($valoresTipoFolha1);
+                        $totalMensal1 = $this->buscaTotaisMensalAno($valoresTipoFolha1);
                     } else {
                         $totalMensal1 = null;
                     }
@@ -692,7 +752,8 @@ class ContrachequeController extends Controller
                                 AND c.encerrada = 1
                                 AND d.classificacao IN ('P', 'D', 'B')
                             ORDER BY
-                                d.codigo;", [$contrato, $tipofolha, $datainicial, $datafinal]);
+                                MONTH(c.datafolha), YEAR(c.datafolha),
+                                CAST(d.codigo AS UNSIGNED);", [$contrato, $tipofolha, $datainicial, $datafinal]);
 
                 }
 
@@ -994,7 +1055,6 @@ class ContrachequeController extends Controller
                 $totalMensal = $this->buscaTotaisMensalAno($valores);
 
             }
-
             if ($valores == null) {
                 return redirect()->back()->with('error', 'Não existem lançamentos no período informado.');
             } else {
@@ -1062,6 +1122,7 @@ class ContrachequeController extends Controller
                 }
             }
         }
+
         return $totais;
     }
 
