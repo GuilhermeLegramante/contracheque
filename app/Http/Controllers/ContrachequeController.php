@@ -162,7 +162,7 @@ class ContrachequeController extends Controller
                                         ON `referencia`.`id` = `calculo`.`idreferencia`
                                         WHERE `servidor`.`idcadmunicipal` = ?
                                         AND `evento`.`classificacao` IN (1, 2)
-                                        AND YEAR(`referencia`.`datafolha`) = 2019
+                                        AND YEAR(`referencia`.`datafolha`) = 2020
                                         GROUP BY `servidor`.`idcadmunicipal`', [$idcadmunicipal]);
 
         }

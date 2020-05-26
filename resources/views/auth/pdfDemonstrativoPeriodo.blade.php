@@ -43,7 +43,7 @@ $mes = "";
         @endphp
 
         <tr>
-            <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
+            <td rowspan="6"><img src="{{public_path('img/brasao.png')}}" width="100"
                     height="100"></td>
         </tr>
         <tr>
@@ -218,7 +218,7 @@ $mes = "";
             @endphp
 
             <tr>
-                <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
+                <td rowspan="6"><img src="{{public_path('img/brasao.png')}}" width="100"
                         height="100"></td>
             </tr>
             <tr>
@@ -399,7 +399,7 @@ $mes = "";
                 @endphp
 
                 <tr>
-                    <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
+                    <td rowspan="6"><img src="{{public_path('img/brasao.png')}}" width="100"
                             height="100"></td>
                 </tr>
                 <tr>
@@ -581,7 +581,7 @@ $mes = "";
                     @endphp
 
                     <tr>
-                        <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png"
+                        <td rowspan="6"><img src="{{public_path('img/brasao.png')}}"
                                 width="100" height="100"></td>
                     </tr>
                     <tr>
@@ -766,7 +766,7 @@ $mes = "";
                         @endphp
 
                         <tr>
-                            <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png"
+                            <td rowspan="6"><img src="{{public_path('img/brasao.png')}}"
                                     width="100" height="100"></td>
                         </tr>
                         <tr>
@@ -955,7 +955,7 @@ $mes = "";
                             @endphp
 
                             <tr>
-                                <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png"
+                                <td rowspan="6"><img src="{{public_path('img/brasao.png')}}"
                                         width="100" height="100"></td>
                             </tr>
                             <tr>
@@ -1149,7 +1149,7 @@ $mes = "";
 
                                 <tr>
                                     <td rowspan="6"><img
-                                            src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
+                                            src="{{public_path('img/brasao.png')}}" width="100"
                                             height="100"></td>
                                 </tr>
                                 <tr>
@@ -1349,7 +1349,7 @@ $mes = "";
 
                                     <tr>
                                         <td rowspan="6"><img
-                                                src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png"
+                                                src="{{public_path('img/brasao.png')}}"
                                                 width="100" height="100"></td>
                                     </tr>
                                     <tr>

@@ -54,7 +54,8 @@
             <div class="col-sm-4">
                 <div class="small-box bg-green">
                     <div class="inner">
-                        <h3 style="font-weight: 100; margin-bottom:-3px;">{{number_format(session('valor_provento'), 2, ',', '.')}}</h3>
+                        <h3 style="font-weight: 100; margin-bottom:-3px;">
+                            {{number_format(session('valor_provento'), 2, ',', '.')}}</h3>
                         <p>Proventos Exercício</p>
                     </div>
                     <div class="icon">
@@ -65,18 +66,20 @@
             <div class="col-sm-4">
                 <div class="small-box bg-red">
                     <div class="inner">
-                        <h3 style="font-weight: 100; margin-bottom:-3px;">{{number_format(session('valor_desconto'), 2, ',', '.')}}</h3>
+                        <h3 style="font-weight: 100; margin-bottom:-3px;">
+                            {{number_format(session('valor_desconto'), 2, ',', '.')}}</h3>
                         <p>Descontos Exercício</p>
                     </div>
                     <div class="icon">
-                        <i  class="fas fa-dollar-sign"></i>
+                        <i class="fas fa-dollar-sign"></i>
                     </div>
                 </div>
             </div>
             <div class="col-sm-4">
                 <div class="small-box bg-blue">
                     <div class="inner">
-                        <h3 style="font-weight: 100; margin-bottom:-3px;">{{number_format(session('valor_liquido'), 2, ',', '.')}}
+                        <h3 style="font-weight: 100; margin-bottom:-3px;">
+                            {{number_format(session('valor_liquido'), 2, ',', '.')}}
                         </h3>
                         <p>Líquido Exercício</p>
                     </div>
@@ -88,6 +91,8 @@
         </div>
     </div>
 </div>
+<hr>
+<p style="font-size: 15px; text-align:center; color: gray; margin-top: 300px; ">Desenvolvido por HardSoft Informática &copy; - Todos os direitos reservados</p>
 @endsection
 
 @section('plugins.Datatables', true)

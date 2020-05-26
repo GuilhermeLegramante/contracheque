@@ -257,6 +257,8 @@
     </div>
     @endif
 </form>
+<hr>
+<p style="font-size: 15px; text-align:center; color: gray; margin-top: 30px; ">Desenvolvido por HardSoft Informática &copy; - Todos os direitos reservados</p>
 
 @endsection
 

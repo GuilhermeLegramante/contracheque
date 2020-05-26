@@ -85,8 +85,9 @@
             </div>
         </div>
     </div>
-
 </form>
+<hr>
+<p style="font-size: 15px; text-align:center; color: gray; margin-top: 280px; ">Desenvolvido por HardSoft Informática &copy; - Todos os direitos reservados</p>
 
 @endsection
 

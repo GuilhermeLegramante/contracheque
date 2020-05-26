@@ -12,7 +12,7 @@
 <body>
     <table style="width: 100%; border: 2px solid black; border-bottom: 1px solid black">
         <tr>
-            <td rowspan="6"><img src="http://localhost/webpatrimonio/hsportal/imagens/brasao.png" width="100"
+            <td rowspan="6"><img src="{{public_path('img/brasao.png')}}" width="100"
                     height="100"></td>
         </tr>
         <tr>

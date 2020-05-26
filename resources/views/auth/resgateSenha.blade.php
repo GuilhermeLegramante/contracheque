@@ -98,11 +98,10 @@
                             </button>
                         </div>
                     </div>
-                        
-                    
                 </form>
-                
-
+                <hr>
+                <p style="font-size: 15px; text-align:center;">Desenvolvido por HardSoft Informática &copy;</p>
+                <p style="font-size: 15px; text-align:center; margin-top:-15px;">Todos os direitos reservados </p>
             </div>
         </div>
     </div>
